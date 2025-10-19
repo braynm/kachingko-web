@@ -24,6 +24,7 @@ const txnEntry = z.object({
   sale_date: z.string(),
   posted_date: z.string(),
   user_id: z.number(),
+  category: z.string(),
 })
 
 const respSchema = z.object({
@@ -123,6 +124,9 @@ export function TableSkeleton({ length }: { length: number }) {
       <TableCell className="font-medium text-left">
         <Skeleton className="h-4 w-16" />
       </TableCell>
+      <TableCell className="font-medium text-left">
+        <Skeleton className="h-4 w-16" />
+      </TableCell>
       <TableCell className="text-left">
         <Skeleton className="h-4 w-16" />
       </TableCell>
@@ -143,6 +147,9 @@ export function TableSkeleton({ length }: { length: number }) {
         <TableRow>
           <TableHead className="text-left font-bold">
             <Skeleton className="h-5 w-24" />
+          </TableHead>
+          <TableHead className="text-left font-bold">
+            <Skeleton className="h-5 w-20" />
           </TableHead>
           <TableHead className="text-left font-bold">
             <Skeleton className="h-5 w-20" />

@@ -37,6 +37,7 @@ import { formatAmount } from '@/lib/utils/amount'
 import { endOfMonth, format, parseISO, startOfDay, startOfMonth, subMonths } from 'date-fns'
 import { Link } from '@tanstack/react-router'
 import { ISO8601_FORMAT } from '@/lib/utils/date'
+import { ImportTransactionButton } from './ImportTransactionButton'
 
 const formatDate = (date: string) => format(parseISO(date), "MM/dd/yy")
 
@@ -95,10 +96,7 @@ export function TxnPage({ queryClient }) {
             <CardTitle>
               <div className='flex justify-between'>
                 <h1 className='text-2xl font-bold'>Transactions</h1>
-                <Link title='Upload' to='/txns/upload' className='p-3 bg-secondary rounded-md transition text-secondary-foreground'>
-                  <Upload className='h-4 w-4' />
-                </Link>
-
+                <ImportTransactionButton />
               </div>
               <div className='flex justify-between mt-5'>
                 <div className='flex items-center justify-center gap-2'>
@@ -149,7 +147,7 @@ export function TxnPage({ queryClient }) {
                       className="pl-8 border-transparent border"
                     />
                   </div>
-                  <Button variant='secondary' disabled={isLoading} className='cursor-pointer shadow-lg' onClick={() => resetQueries()}>
+                  <Button disabled={isLoading} className='cursor-pointer shadow-lg' onClick={() => resetQueries()}>
                     <RotateCcw />
                   </Button>
                 </div>
@@ -165,6 +163,7 @@ export function TxnPage({ queryClient }) {
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-left bold">Card</TableHead>
+                  <TableHead className="text-left bold">Category</TableHead>
                   <TableHead className="text-left bold">Sale Date</TableHead>
                   <TableHead className="text-left bold">Post Date</TableHead>
                   <TableHead className="text-left bold">Description</TableHead>
@@ -175,6 +174,7 @@ export function TxnPage({ queryClient }) {
                 {txns.map((transaction) => (
                   <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
                     <TableCell className="text-left text-xs">{transaction.card}</TableCell>
+                    <TableCell className="text-left text-xs">{transaction.category}</TableCell>
                     <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
                     <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
                     <TableCell className="text-left text-xs">{transaction.details}</TableCell>
