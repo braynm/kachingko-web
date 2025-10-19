@@ -55,6 +55,12 @@ const monthRange = (now = new Date()) => {
 const curMonthRange = (now = new Date()) => monthRange(startOfDay(now))
 const prevMonthRange = (now = new Date()) => monthRange(subMonths(startOfDay(now), 1))
 
+export const staticBanks: Array<{ name: string, variant: string, text: string }> = [
+  { name: 'RCBC Hexagon Prio', variant: 'bg-accent', text: 'text-background' },
+  { name: 'RCBC Preferred AirMiles', variant: 'bg-chart-1', text: 'text-green-900' },
+  { name: 'EastWest Plat Cashback', variant: 'bg-chart-3', text: 'text-accent-foreground' },
+]
+
 export function TxnPage({ queryClient }) {
   const {
     fetchNextPage,
@@ -89,12 +95,6 @@ export function TxnPage({ queryClient }) {
   }, [maskAmt])
 
   const isLoading = mounted && isFetching
-
-  const staticBanks: Array<{ name: string, variant: string, text: string }> = [
-    { name: 'RCBC Hexagon Prio', variant: 'bg-accent', text: 'text-background' },
-    { name: 'RCBC Preferred AirMiles', variant: 'bg-chart-1', text: 'text-green-900' },
-    { name: 'EastWest Plat Cashback', variant: 'bg-chart-3', text: 'text-accent-foreground' },
-  ]
 
   return (
     <>
@@ -220,10 +220,10 @@ export function TxnPage({ queryClient }) {
 
           <CardFooter className='m-auto'>
             {hasNextPage && <Button
-              variant='secondary'
+              variant='outline'
               onClick={() => fetchNextPage()}
               disabled={!hasNextPage || isFetchingNextPage}
-              className='tex-sm transition transition-all shadow shadow-lg uppercase cursor-pointer bg-secondary text-secondary-foreground'
+              className='tex-sm transition transition-all shadow shadow-lg uppercase cursor-pointer'
             >
 
               {isFetching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

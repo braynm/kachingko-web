@@ -8,6 +8,7 @@ import { fetchUserChartsOpts } from "@/app/routes/_authenticated/spending-highli
 import { CardTotals } from "./components/CardTotals";
 import { MonthlyChart } from "./components/MonthlyChart";
 import { CurrentMonthTopPurchase } from "./components/CurrentMonthTopPurchase"
+import { CategoriesChartTxns } from "./components/CategoriesChartTxns";
 
 const defaultValues = {
   highestPurchase: '0',
@@ -52,6 +53,7 @@ export function SpendingHighlightPage() {
       <CardTotals data={totals} isLoading={isFetching} />
       <MonthlyChart isLoading={isFetching} data={monthlyExpenses} />
       <CurrentMonthTopPurchase isLoading={isFetching} data={topExpenses} />
+      <CategoriesChartTxns queryClient={queryClient} />
     </div>
   )
 }

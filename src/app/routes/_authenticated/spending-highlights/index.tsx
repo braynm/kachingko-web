@@ -61,5 +61,6 @@ export const fetchUserChartsFn = createServerFn({
   })
 
 function RouteComponent() {
-  return <SpendingHighlightPage />
+  const { queryClient } = Route.useRouteContext()
+  return <SpendingHighlightPage queryClient={queryClient} />
 }

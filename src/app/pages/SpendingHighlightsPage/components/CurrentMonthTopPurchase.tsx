@@ -174,7 +174,7 @@ export function CurrentMonthTopPurchase({
   }
 
   return (
-    <Card>
+    <Card className="mb-5">
       <CardHeader>
         <CardTitle>Top Purchases</CardTitle>
         <CardDescription>Highest spending transactions this month</CardDescription>
