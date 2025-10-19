@@ -14,7 +14,7 @@ import { formatDate } from "@/lib/utils/date";
 import { formatAmount } from "@/lib/utils/amount";
 import { useState } from "react";
 import { EmptyData } from "@/app/components/EmptyData";
-import { Minus, TableProperties, X } from "lucide-react";
+import { Minus, TableProperties, TrendingUp, X } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 
@@ -46,11 +46,20 @@ export function CategoriesTxnList({ queryClient }) {
   return (
     <>
       <div className="flex justify-between">
-        <h2 className="text-lg font-bold mb-2">Transactions</h2>
+        <div className="mb-2">
+          <h2 className="text-sm text-muted-foreground">Transactions</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-4xl font-black ">₱125K</h2>
+            <span className="text-sm flex items-center gap-1">
+              <TrendingUp className="h-4 w-4" />
+              +10%
+            </span>
+          </div>
+        </div>
         <div className="flex gap-1 items-center">
           <div className="flex items-center justify-center flex-row cursor-pointer">
             <X className="h-4 w-4" />
-            <span className="underline text-sm">Clear All</span>
+            <span className="underline text-sm mr-2">Clear All</span>
           </div>
           <div><Badge className="bg-chart-3 text-green-900">EastWest Plat Cashback</Badge></div>
           <div><Badge variant='outline'>Health & Pharmacy</Badge></div>
