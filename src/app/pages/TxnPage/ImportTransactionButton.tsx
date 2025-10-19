@@ -23,9 +23,9 @@ export function ImportTransactionButton() {
           Import Transactions
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>
-          <Link to="/txns/upload" className="flex items-center gap-2 w-full">
+      <DropdownMenuContent className="shadow-xl">
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/txns/upload" >
             <BookText className="dark:hover:text-background" />
             PDF
           </Link>

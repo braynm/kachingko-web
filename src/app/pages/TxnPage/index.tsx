@@ -38,6 +38,7 @@ import { endOfMonth, format, parseISO, startOfDay, startOfMonth, subMonths } fro
 import { Link } from '@tanstack/react-router'
 import { ISO8601_FORMAT } from '@/lib/utils/date'
 import { ImportTransactionButton } from './ImportTransactionButton'
+import { Badge } from '@/app/components/ui/badge'
 
 const formatDate = (date: string) => format(parseISO(date), "MM/dd/yy")
 
@@ -88,6 +89,13 @@ export function TxnPage({ queryClient }) {
   }, [maskAmt])
 
   const isLoading = mounted && isFetching
+
+  const staticBanks: Array<{ name: string, variant: string, text: string }> = [
+    { name: 'RCBC Hexagon Prio', variant: 'bg-accent', text: 'text-background' },
+    { name: 'RCBC Preferred AirMiles', variant: 'bg-chart-1', text: 'text-green-900' },
+    { name: 'EastWest Plat Cashback', variant: 'bg-chart-3', text: 'text-accent-foreground' },
+  ]
+
   return (
     <>
       <div className='container mx-auto w-full max-w-7xl w-7xl flex gap-5'>
@@ -173,8 +181,16 @@ export function TxnPage({ queryClient }) {
               <TableBody>
                 {txns.map((transaction) => (
                   <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
-                    <TableCell className="text-left text-xs">{transaction.card}</TableCell>
-                    <TableCell className="text-left text-xs">{transaction.category}</TableCell>
+                    <TableCell className="text-left text-xs">
+                      <Badge className={`${staticBanks.find(card => transaction.card === card.name)?.text} ${staticBanks.find(card => transaction.card === card.name)?.variant}`}>
+                        {transaction.card}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-left text-xs">
+                      <Badge variant='outline'>
+                        {transaction.category}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
                     <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
                     <TableCell className="text-left text-xs">{transaction.details}</TableCell>
