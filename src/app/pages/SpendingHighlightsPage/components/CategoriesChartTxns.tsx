@@ -1,5 +1,5 @@
 import { TrendingUp } from "lucide-react"
-import { Pie, PieChart } from "recharts"
+import { Pie, PieChart, Legend } from "recharts"
 import {
   Card,
   CardContent,
@@ -13,6 +13,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
 } from "@/app/components/ui/chart"
 import { CategoriesTxnList } from "./CategoriesTxnList";
 
@@ -171,7 +173,7 @@ export function CategoriesChartTxns({ queryClient }) {
         <CardDescription>Categories</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="mb-10">
           <PieChart>
             <ChartTooltip
               cursor={false}
@@ -183,6 +185,30 @@ export function CategoriesChartTxns({ queryClient }) {
               nameKey="category"
               fill="#8884d8"
             />
+            <ChartLegend
+              content={<ChartLegendContent nameKey="category" />}
+              className="flex-wrap *:justify-center"
+            />
+            {/* <ChartLegend */}
+            {/*   verticalAlign="bottom" */}
+            {/*   height={50} */}
+            {/*   iconType="rect" */}
+            {/*   iconSize={12} */}
+            {/*   layout="horizontal" */}
+            {/*   align="center" */}
+            {/*   formatter={(value: string, entry: any) => { */}
+            {/*     const item = rawChartData.find(d => d.category === value); */}
+            {/*     if (item) { */}
+            {/*       const percentage = ((item.value / rawChartData.reduce((sum, d) => sum + d.value, 0)) * 100).toFixed(1); */}
+            {/*       return `${item.label} (${percentage}%)`; */}
+            {/*     } */}
+            {/*     return value; */}
+            {/*   }} */}
+            {/*   wrapperStyle={{ */}
+            {/*     paddingTop: "20px", */}
+            {/*     fontSize: "13px" */}
+            {/*   }} */}
+            {/* /> */}
           </PieChart>
         </ChartContainer>
 

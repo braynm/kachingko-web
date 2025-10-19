@@ -65,7 +65,7 @@ export function CategoriesTxnList({ queryClient }) {
           <div><Badge variant='outline'>Health & Pharmacy</Badge></div>
         </div>
       </div>
-      {isFetching && !isFetchingNextPage && <TableSkeleton length={50} />}
+      {isFetching && !isFetchingNextPage && <TableSkeleton length={10} />}
       {
         txns && txns.length > 0 && <Table>
           <TableHeader>
