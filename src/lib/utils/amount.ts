@@ -60,5 +60,5 @@ export function formatAmount(amount: number | string, precision: number = 2): st
   const formattedNumber = rounded.toFixed(precision).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   // Return with PHP symbol and negative sign if needed
-  return isNegative ? `-PHP ${formattedNumber}` : `PHP ${formattedNumber}`;
+  return isNegative ? `-${formattedNumber}` : `${formattedNumber}`;
 }

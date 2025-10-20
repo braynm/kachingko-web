@@ -48,15 +48,18 @@ export function CategoriesTxnList({ queryClient }) {
       <div className="flex justify-between">
         <div className="mb-2">
           <h2 className="text-sm text-muted-foreground">Transactions</h2>
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-4xl font-black ">₱125K</h2>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-muted-foreground">PHP</span>
+              <h2 className="text-4xl font-black ">125,250.85</h2>
+            </div>
             <span className="text-sm flex items-center gap-1">
               <TrendingUp className="h-4 w-4" />
               +10%
             </span>
           </div>
         </div>
-        <div className="flex gap-1 items-center">
+        <div className="flex gap-2 items-center">
           <div className="flex items-center justify-center flex-row cursor-pointer">
             <X className="h-4 w-4" />
             <span className="underline text-sm mr-2">Clear All</span>
