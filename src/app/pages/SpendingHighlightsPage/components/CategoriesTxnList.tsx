@@ -1,5 +1,5 @@
 import { fetchTxnQueryOpts, TableSkeleton } from "@/app/routes/_authenticated/txns";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 import {
   Table,
@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table'
-import { staticBanks } from "../../TxnPage";
+import { bankCardColors, mergeBankAndColors } from "../../TxnPage";
 import { formatDate } from "@/lib/utils/date";
 import { formatAmount } from "@/lib/utils/amount";
 import { useState } from "react";
@@ -17,10 +17,13 @@ import { EmptyData } from "@/app/components/EmptyData";
 import { Minus, TableProperties, TrendingUp, X } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
+import { listUserCardsOptions } from "../../TxnUploadPage";
 
 
 
 export function CategoriesTxnList({ queryClient }) {
+  const { data: cardsResponse } = useQuery(listUserCardsOptions)
+  const cards = cardsResponse?.success ? mergeBankAndColors(cardsResponse.data, bankCardColors) : []
   const {
     fetchNextPage,
     hasNextPage,
@@ -49,9 +52,9 @@ export function CategoriesTxnList({ queryClient }) {
         <div className="mb-2">
           <h2 className="text-sm text-muted-foreground">Transactions</h2>
           <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center gap-1">
+            <div className="flex items-baseline gap-1">
               <span className="text-sm text-muted-foreground">PHP</span>
-              <h2 className="text-4xl font-black ">125,250.85</h2>
+              <h2 className="text-2xl font-bold ">125,250.85</h2>
             </div>
             <span className="text-sm flex items-center gap-1">
               <TrendingUp className="h-4 w-4" />
@@ -82,26 +85,29 @@ export function CategoriesTxnList({ queryClient }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {txns.map((transaction) => (
-              <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
-                <TableCell className="text-left text-xs">
-                  <Badge className={`${staticBanks.find(card => transaction.card === card.name)?.text} ${staticBanks.find(card => transaction.card === card.name)?.variant}`}>
-                    {transaction.card}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-left text-xs">
-                  <Badge variant='outline'>
-                    {transaction.category}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
-                <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
-                <TableCell className="text-left text-xs">{transaction.details}</TableCell>
-                <TableCell className="text-right font-medium ">{
-                  maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
-                }</TableCell>
-              </TableRow>
-            ))}
+            {txns.map((transaction) => {
+              const card = cards.find(card => `${card.bank} ${card.name}` === transaction.card)
+              return (
+                <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
+                  <TableCell className="text-left text-xs">
+                    <Badge className={`${card?.variant} ${card?.text}`}>
+                      {transaction.card}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-left text-xs">
+                    <Badge variant='outline'>
+                      {transaction.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
+                  <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
+                  <TableCell className="text-left text-xs">{transaction.details}</TableCell>
+                  <TableCell className="text-right font-medium ">{
+                    maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
+                  }</TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       }

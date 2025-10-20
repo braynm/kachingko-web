@@ -63,11 +63,10 @@ export const bankCardColors: Array<{ variant: string, text: string }> = [
   { variant: 'bg-chart-1', text: 'text-green-900' },
   { variant: 'bg-chart-5', text: 'text-accent-foreground' },
   { variant: 'bg-lime-700', text: 'text-lime-100' },
-  { variant: 'bg-green-700', text: 'text-lime-200' },
-  { variant: 'bg-emerald-700', text: 'text-emerald-100' },
+  { variant: 'bg-emerald-400', text: 'text-emerald-900' },
 ]
 
-const mergeBankAndColors = (cards: CardItem[], bankCardColors: Array<BankColors>) => {
+export const mergeBankAndColors = (cards: CardItem[], bankCardColors: Array<BankColors>) => {
   return cards.map((card, index) => ({
     ...card,
     ...bankCardColors[index]
