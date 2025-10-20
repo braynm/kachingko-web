@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2, TableProperties, Search, ArrowDownUp, CalendarDays, RotateCcw, Upload } from 'lucide-react'
 import {
   Table,
@@ -35,10 +35,10 @@ import { CardMonthTotal } from './CardMonthTotal'
 import { formatAmount } from '@/lib/utils/amount'
 
 import { endOfMonth, format, parseISO, startOfDay, startOfMonth, subMonths } from 'date-fns'
-import { Link } from '@tanstack/react-router'
 import { ISO8601_FORMAT } from '@/lib/utils/date'
 import { ImportTransactionButton } from './ImportTransactionButton'
 import { Badge } from '@/app/components/ui/badge'
+import { listUserCardsOptions } from '../TxnUploadPage'
 
 const formatDate = (date: string) => format(parseISO(date), "MM/dd/yy")
 
@@ -55,13 +55,29 @@ const monthRange = (now = new Date()) => {
 const curMonthRange = (now = new Date()) => monthRange(startOfDay(now))
 const prevMonthRange = (now = new Date()) => monthRange(subMonths(startOfDay(now), 1))
 
-export const staticBanks: Array<{ name: string, variant: string, text: string }> = [
-  { name: 'RCBC Hexagon Prio', variant: 'bg-accent', text: 'text-background' },
-  { name: 'RCBC Preferred AirMiles', variant: 'bg-chart-1', text: 'text-green-900' },
-  { name: 'EastWest Plat Cashback', variant: 'bg-chart-3', text: 'text-accent-foreground' },
+type CardItem = { bank: string, name: string, id: string }
+type BankColors = { variant: string, text: string }
+
+export const bankCardColors: Array<{ variant: string, text: string }> = [
+  { variant: 'bg-accent', text: 'text-background' },
+  { variant: 'bg-chart-1', text: 'text-green-900' },
+  { variant: 'bg-chart-5', text: 'text-accent-foreground' },
+  { variant: 'bg-lime-700', text: 'text-lime-100' },
+  { variant: 'bg-green-700', text: 'text-lime-200' },
+  { variant: 'bg-emerald-700', text: 'text-emerald-100' },
 ]
 
+const mergeBankAndColors = (cards: CardItem[], bankCardColors: Array<BankColors>) => {
+  return cards.map((card, index) => ({
+    ...card,
+    ...bankCardColors[index]
+  }))
+}
+
 export function TxnPage({ queryClient }) {
+  const { data: cardsResponse } = useQuery(listUserCardsOptions)
+  const cards = cardsResponse?.success ? mergeBankAndColors(cardsResponse.data, bankCardColors) : []
+
   const {
     fetchNextPage,
     hasNextPage,
@@ -179,26 +195,29 @@ export function TxnPage({ queryClient }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {txns.map((transaction) => (
-                  <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
-                    <TableCell className="text-left text-xs">
-                      <Badge className={`${staticBanks.find(card => transaction.card === card.name)?.text} ${staticBanks.find(card => transaction.card === card.name)?.variant}`}>
-                        {transaction.card}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-left text-xs">
-                      <Badge variant='outline'>
-                        {transaction.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
-                    <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
-                    <TableCell className="text-left text-xs">{transaction.details}</TableCell>
-                    <TableCell className="text-right font-medium ">{
-                      maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
-                    }</TableCell>
-                  </TableRow>
-                ))}
+                {txns.map((transaction) => {
+                  const card = cards.find(card => `${card.bank} ${card.name}` === transaction.card)
+                  return (
+                    <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
+                      <TableCell className="text-left text-xs">
+                        <Badge className={`${card?.variant} ${card?.text}`}>
+                          {transaction.card}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-left text-xs">
+                        <Badge variant='outline'>
+                          {transaction.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
+                      <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
+                      <TableCell className="text-left text-xs">{transaction.details}</TableCell>
+                      <TableCell className="text-right font-medium ">{
+                        maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
+                      }</TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>}
 
