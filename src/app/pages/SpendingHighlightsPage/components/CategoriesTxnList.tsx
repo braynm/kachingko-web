@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, TableProperties, TrendingUp } from "lucide-react";
+import { Eye, EyeOff, TableProperties, TrendingDown, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -32,11 +32,14 @@ type TxnItem = {
 type CategoriesTxnListProps = {
   isFetching: boolean,
   curMonthTotalAmount: string,
+  prevMonthTotalAmount: string,
   txns: Array<TxnItem>
 }
 
 
-export function CategoriesTxnList({ txns, isFetching, curMonthTotalAmount }: CategoriesTxnListProps) {
+export function CategoriesTxnList({
+  txns, isFetching, curMonthTotalAmount, prevMonthTotalAmount
+}: CategoriesTxnListProps) {
   const { data: cardsResponse } = useQuery(listUserCardsOptions)
   const cards = cardsResponse?.success ? mergeBankAndColors(cardsResponse.data, bankCardColors) : []
 
@@ -51,10 +54,12 @@ export function CategoriesTxnList({ txns, isFetching, curMonthTotalAmount }: Cat
               <span className="text-sm text-muted-foreground">PHP</span>
               <h2 className="text-2xl font-bold ">{formatAmount(curMonthTotalAmount)}</h2>
             </div>
-            <span className="text-sm flex items-center gap-1 text-muted-foreground">
-              <TrendingUp className="h-4 w-4" />
-              +10%
-            </span>
+            {!isFetching && <span className="text-sm flex items-center gap-1 text-muted-foreground">
+              {Number(curMonthTotalAmount) >= Number(prevMonthTotalAmount) ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+              {Number(curMonthTotalAmount) >= Number(prevMonthTotalAmount) ? '+' : '-'}
+              {Math.round((Number(curMonthTotalAmount) - Number(prevMonthTotalAmount)) / Number(prevMonthTotalAmount) * 100)}
+              %
+            </span>}
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -123,7 +128,7 @@ export function CategoriesTxnList({ txns, isFetching, curMonthTotalAmount }: Cat
         <div className='mt-[5rem] flex flex-col gap-3'>
           <EmptyData title="Empty Transactions" emptyIcon={TableProperties} />
 
-          <Button onClick={() => resetQueries()} variant='outline' className='border cursor-pointer m-auto'>Refresh</Button>
+          {/* <Button onClick={() => resetQueries()} variant='outline' className='border cursor-pointer m-auto'>Refresh</Button> */}
           <div className="w-[10rem] m-auto relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
             <span className="bg-card text-muted-foreground relative z-10 px-2">
               or

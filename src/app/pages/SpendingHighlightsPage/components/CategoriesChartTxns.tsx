@@ -202,6 +202,7 @@ export function CategoriesChartTxns() {
         <CategoriesTxnList
           isFetching={isFetching}
           curMonthTotalAmount={query.data?.success ? query.data?.data.cur_month_total_amount : '0'}
+          prevMonthTotalAmount={query.data?.success ? query.data?.data.prev_month_total_amount : '0'}
           txns={query.data?.success ? query.data?.data.cur_month_txns : []}
         />
       </CardContent>
