@@ -20,6 +20,8 @@ import { CategoriesTxnList } from "./CategoriesTxnList";
 import { fetchCategoryChartAndTxnsOpts } from "@/app/routes/_authenticated/spending-highlights";
 import { useQuery } from "@tanstack/react-query";
 import { match } from "ts-pattern";
+import { endOfMonth, getMonth, startOfMonth, subMonths } from "date-fns";
+import { formatDate } from "@/lib/utils/date";
 
 // Pre-defined 100 green shades from darkest to lightest
 const greenShades100 = [
@@ -143,12 +145,8 @@ const rawChartData = [
   { category: "other", label: "Other", value: 90 },
 ];
 
-// Get shades for the number of data items
-
-type PieChartConfig = () => ChartConfig
-
 // Build dynamic chart config
-const chartConfig: PieChartConfig = (data, shades) => {
+const chartConfig = (data, shades): ChartConfig => {
   return {
     value: {
       label: "Visitors",
@@ -165,9 +163,13 @@ const chartConfig: PieChartConfig = (data, shades) => {
 
 export const description = "A pie chart with dynamic green shades"
 export function CategoriesChartTxns() {
-  // const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-09-01", "2025-09-30"))
-  const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-05-01", "2025-05-31"))
-  const shades = getShades(query.data?.success ? query.data.data.categories.length : 0);
+  const startMonthDate = startOfMonth(subMonths(new Date(), 1))
+  const endMonthDate = endOfMonth(subMonths(new Date(), 1))
+  const formattedStartDate = formatDate(startMonthDate)
+  const formattedEndDate = formatDate(endMonthDate)
+
+  const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts(formattedStartDate, formattedEndDate))
+  const shades = getShades(query.data?.success ? query.data.data.categories.length : 0)
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
