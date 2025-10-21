@@ -48,8 +48,9 @@ const categoryChartsSchema = z.object({
   success: z.boolean(),
   data: z.object({
     categories: z.array(z.object({
-      amount: z.number(),
-      category: z.string()
+      value: z.number(),
+      category: z.string(),
+      label: z.string()
     })),
     prev_month_total_amount: z.string(),
     cur_month_total_amount: z.string(),

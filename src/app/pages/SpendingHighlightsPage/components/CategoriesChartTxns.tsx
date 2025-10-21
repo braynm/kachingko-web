@@ -19,6 +19,7 @@ import {
 import { CategoriesTxnList } from "./CategoriesTxnList";
 import { fetchCategoryChartAndTxnsOpts } from "@/app/routes/_authenticated/spending-highlights";
 import { useQuery } from "@tanstack/react-query";
+import { match } from "ts-pattern";
 
 // Pre-defined 100 green shades from darkest to lightest
 const greenShades100 = [
@@ -117,11 +118,11 @@ const getShades = (count: number): string[] => {
     return Array.from({ length: count }, (_, i) => greenShades100[i * step]);
   } else if (count <= 10) {
     // Use every 10th shade for good contrast
-    const step = 10;
+    const step = 5;
     return Array.from({ length: count }, (_, i) => greenShades100[i * step]);
   } else if (count <= 20) {
     // Use every 5th shade
-    const step = 5;
+    const step = 3;
     return Array.from({ length: count }, (_, i) => greenShades100[Math.min(i * step, 99)]);
   } else if (count <= 50) {
     // Use every 2nd shade
@@ -143,31 +144,30 @@ const rawChartData = [
 ];
 
 // Get shades for the number of data items
-const shades = getShades(rawChartData.length);
 
-// Build chart data with green shades
-const chartData = rawChartData.map((item, index) => ({
-  ...item,
-  fill: shades[index]
-}));
+type PieChartConfig = () => ChartConfig
 
 // Build dynamic chart config
-const chartConfig: ChartConfig = {
-  value: {
-    label: "Visitors",
-  },
-  ...rawChartData.reduce((acc, item, index) => {
-    acc[item.category] = {
-      label: item.label,
-      color: shades[index],
-    };
-    return acc;
-  }, {} as ChartConfig)
+const chartConfig: PieChartConfig = (data, shades) => {
+  return {
+    value: {
+      label: "Visitors",
+    },
+    ...data.reduce((acc, item, index) => {
+      acc[item.category] = {
+        label: item.label,
+        color: shades[index],
+      };
+      return acc;
+    }, {} as ChartConfig)
+  }
 };
 
 export const description = "A pie chart with dynamic green shades"
-export function CategoriesChartTxns({ queryClient }) {
-  const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-09-01", "2025-09-30"))
+export function CategoriesChartTxns() {
+  // const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-09-01", "2025-09-30"))
+  const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-05-01", "2025-05-31"))
+  const shades = getShades(query.data?.success ? query.data.data.categories.length : 0);
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -175,24 +175,27 @@ export function CategoriesChartTxns({ queryClient }) {
         <CardDescription>Categories</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mb-10">
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="category"
-              fill="#8884d8"
-            />
-            <ChartLegend
-              content={<ChartLegendContent nameKey="category" />}
-              className="flex-wrap *:justify-center"
-            />
-          </PieChart>
-        </ChartContainer>
+        {!isFetching && query.data?.success &&
+          <ChartContainer config={chartConfig(query.data?.data?.categories, shades)} className="mb-10">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+
+              <Pie
+                data={query.data.data.categories.map((item, index) => ({ ...item, fill: shades[index] }))}
+                dataKey="value"
+                nameKey="category"
+                fill="#8884d8"
+              />
+              <ChartLegend
+                content={<ChartLegendContent nameKey="category" />}
+                className="flex-wrap *:justify-center"
+              />
+            </PieChart>
+          </ChartContainer>
+        }
 
         <CategoriesTxnList
           isFetching={isFetching}
@@ -208,6 +211,6 @@ export function CategoriesChartTxns({ queryClient }) {
           Showing total visitors for the last 6 months
         </div>
       </CardFooter>
-    </Card>
+    </Card >
   )
 }

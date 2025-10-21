@@ -52,7 +52,7 @@ export function SpendingHighlightPage() {
       <CardTotals data={totals} isLoading={isFetching} />
       <MonthlyChart isLoading={isFetching} data={monthlyExpenses} />
       <CurrentMonthTopPurchase isLoading={isFetching} data={topExpenses} />
-      <CategoriesChartTxns queryClient={queryClient} />
+      <CategoriesChartTxns />
     </div>
   )
 }
