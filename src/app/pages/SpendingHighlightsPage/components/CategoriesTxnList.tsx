@@ -56,7 +56,7 @@ export function CategoriesTxnList({
               <span className="text-sm text-muted-foreground">PHP</span>
               <h2 className="text-2xl font-bold ">{formatAmount(curMonthTotalAmount)}</h2>
             </div>
-            {!isFetching && pct !== Infinity && <span className="text-sm flex items-center gap-1 text-muted-foreground">
+            {!isFetching && ![Infinity, NaN].includes(pct) && <span className="text-sm flex items-center gap-1 text-muted-foreground">
               {Number(curMonthTotalAmount) >= Number(prevMonthTotalAmount) ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
               {Number(curMonthTotalAmount) >= Number(prevMonthTotalAmount) ? '+' : '-'}
               {Math.round(pct)}%
