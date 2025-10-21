@@ -1,5 +1,5 @@
 import { TrendingUp } from "lucide-react"
-import { Pie, PieChart, Legend } from "recharts"
+import { Pie, PieChart } from "recharts"
 import {
   Card,
   CardContent,
@@ -17,6 +17,8 @@ import {
   ChartLegendContent
 } from "@/app/components/ui/chart"
 import { CategoriesTxnList } from "./CategoriesTxnList";
+import { fetchCategoryChartAndTxnsOpts } from "@/app/routes/_authenticated/spending-highlights";
+import { useQuery } from "@tanstack/react-query";
 
 // Pre-defined 100 green shades from darkest to lightest
 const greenShades100 = [
@@ -164,8 +166,8 @@ const chartConfig: ChartConfig = {
 };
 
 export const description = "A pie chart with dynamic green shades"
-
 export function CategoriesChartTxns({ queryClient }) {
+  const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts("2025-09-01", "2025-09-30"))
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -189,30 +191,14 @@ export function CategoriesChartTxns({ queryClient }) {
               content={<ChartLegendContent nameKey="category" />}
               className="flex-wrap *:justify-center"
             />
-            {/* <ChartLegend */}
-            {/*   verticalAlign="bottom" */}
-            {/*   height={50} */}
-            {/*   iconType="rect" */}
-            {/*   iconSize={12} */}
-            {/*   layout="horizontal" */}
-            {/*   align="center" */}
-            {/*   formatter={(value: string, entry: any) => { */}
-            {/*     const item = rawChartData.find(d => d.category === value); */}
-            {/*     if (item) { */}
-            {/*       const percentage = ((item.value / rawChartData.reduce((sum, d) => sum + d.value, 0)) * 100).toFixed(1); */}
-            {/*       return `${item.label} (${percentage}%)`; */}
-            {/*     } */}
-            {/*     return value; */}
-            {/*   }} */}
-            {/*   wrapperStyle={{ */}
-            {/*     paddingTop: "20px", */}
-            {/*     fontSize: "13px" */}
-            {/*   }} */}
-            {/* /> */}
           </PieChart>
         </ChartContainer>
 
-        <CategoriesTxnList queryClient={queryClient} />
+        <CategoriesTxnList
+          isFetching={isFetching}
+          curMonthTotalAmount={query.data?.success ? query.data?.data.cur_month_total_amount : '0'}
+          txns={query.data?.success ? query.data?.data.cur_month_txns : []}
+        />
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">

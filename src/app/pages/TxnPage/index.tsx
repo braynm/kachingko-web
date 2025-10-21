@@ -59,9 +59,9 @@ type CardItem = { bank: string, name: string, id: string }
 type BankColors = { variant: string, text: string }
 
 export const bankCardColors: Array<{ variant: string, text: string }> = [
-  { variant: 'bg-accent', text: 'text-background' },
+  { variant: 'bg-accent', text: 'text-background ' },
   { variant: 'bg-chart-1', text: 'text-green-900' },
-  { variant: 'bg-chart-5', text: 'text-accent-foreground' },
+  { variant: 'bg-chart-5', text: 'text-accent-foreground dark:text-amber-100' },
   { variant: 'bg-lime-700', text: 'text-lime-100' },
   { variant: 'bg-emerald-400', text: 'text-emerald-900' },
 ]

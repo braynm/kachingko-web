@@ -1,5 +1,6 @@
-import { fetchTxnQueryOpts, TableSkeleton } from "@/app/routes/_authenticated/txns";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Eye, EyeOff, TableProperties, TrendingUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   Table,
@@ -9,43 +10,37 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table'
+
 import { bankCardColors, mergeBankAndColors } from "../../TxnPage";
 import { formatDate } from "@/lib/utils/date";
 import { formatAmount } from "@/lib/utils/amount";
-import { useState } from "react";
 import { EmptyData } from "@/app/components/EmptyData";
-import { Minus, TableProperties, TrendingUp, X } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
+import { TableSkeleton } from "@/app/routes/_authenticated/txns";
 import { listUserCardsOptions } from "../../TxnUploadPage";
 
+type TxnItem = {
+  category: string,
+  details: string,
+  sale_date: string,
+  posted_date: string,
+  id: string,
+  card: string,
+  amount: number,
+}
+type CategoriesTxnListProps = {
+  isFetching: boolean,
+  curMonthTotalAmount: string,
+  txns: Array<TxnItem>
+}
 
 
-export function CategoriesTxnList({ queryClient }) {
+export function CategoriesTxnList({ txns, isFetching, curMonthTotalAmount }: CategoriesTxnListProps) {
   const { data: cardsResponse } = useQuery(listUserCardsOptions)
   const cards = cardsResponse?.success ? mergeBankAndColors(cardsResponse.data, bankCardColors) : []
-  const {
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    data
-  } = useInfiniteQuery(fetchTxnQueryOpts())
 
-
-  const [maskAmt, setEnableMaskAmt] = useState(false)
-
-  const txns = data?.pages
-    .filter(page => page.success)
-    .flatMap(page => page.data.entries)
-    .slice(0, 20)
-    ?? [];
-
-  const resetQueries = () => {
-    queryClient.resetQueries({ queryKey: ['txns'] })
-    queryClient.resetQueries({ queryKey: ['txnsDailyTrend'] })
-  }
-
+  const [maskAmt, setMaskAmt] = useState(true)
   return (
     <>
       <div className="flex justify-between">
@@ -54,24 +49,34 @@ export function CategoriesTxnList({ queryClient }) {
           <div className="flex items-center gap-3 mb-2">
             <div className="flex items-baseline gap-1">
               <span className="text-sm text-muted-foreground">PHP</span>
-              <h2 className="text-2xl font-bold ">125,250.85</h2>
+              <h2 className="text-2xl font-bold ">{formatAmount(curMonthTotalAmount)}</h2>
             </div>
-            <span className="text-sm flex items-center gap-1">
+            <span className="text-sm flex items-center gap-1 text-muted-foreground">
               <TrendingUp className="h-4 w-4" />
               +10%
             </span>
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          <div className="flex items-center justify-center flex-row cursor-pointer">
-            <X className="h-4 w-4" />
-            <span className="underline text-sm mr-2">Clear All</span>
-          </div>
-          <div><Badge className="bg-chart-3 text-green-900">EastWest Plat Cashback</Badge></div>
-          <div><Badge variant='outline'>Health & Pharmacy</Badge></div>
+          {txns && txns.length > 0 && <Button
+            onClick={() => setMaskAmt(!maskAmt)}
+            className="cursor-pointer"
+            variant="ghost"
+            size='icon'>
+            {maskAmt ? <Eye className='cursor-pointer w-6 h-6' /> : <EyeOff className='cursor-pointerw-6 h-6' />}
+          </Button>}
+          {/* <div className="flex items-center justify-center flex-row cursor-pointer"> */}
+          {/*   <X className="h-4 w-4" /> */}
+          {/*   <span className="cursor-pointer underline text-sm mr-2">Clear All</span> */}
+          {/* </div> */}
+          {/* <div> */}
+          {/*   <Badge className="bg-chart-3 text-green-900">EastWest Plat Cashback</Badge> */}
+          {/* </div> */}
+          {/* <div><Badge variant='outline'>Health & Pharmacy</Badge></div> */}
         </div>
-      </div>
-      {isFetching && !isFetchingNextPage && <TableSkeleton length={10} />}
+      </div >
+      {isFetching && <TableSkeleton length={10} />
+      }
       {
         txns && txns.length > 0 && <Table>
           <TableHeader>

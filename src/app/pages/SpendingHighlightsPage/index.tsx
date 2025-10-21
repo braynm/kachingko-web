@@ -18,7 +18,6 @@ const defaultValues = {
 }
 
 export function SpendingHighlightPage() {
-
   const queryClient = useQueryClient()
   const { startDate, endDate } = getYearToDate()
   const { isFetching, ...query } = useQuery(fetchUserChartsOpts(startDate, endDate))
