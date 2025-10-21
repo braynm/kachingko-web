@@ -19,7 +19,6 @@ import {
 import { CategoriesTxnList } from "./CategoriesTxnList";
 import { fetchCategoryChartAndTxnsOpts } from "@/app/routes/_authenticated/spending-highlights";
 import { useQuery } from "@tanstack/react-query";
-import { match } from "ts-pattern";
 import { endOfMonth, getMonth, startOfMonth, subMonths } from "date-fns";
 import { formatDate } from "@/lib/utils/date";
 
@@ -170,10 +169,11 @@ export function CategoriesChartTxns() {
 
   const { isFetching, ...query } = useQuery(fetchCategoryChartAndTxnsOpts(formattedStartDate, formattedEndDate))
   const shades = getShades(query.data?.success ? query.data.data.categories.length : 0)
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Your September Purchases</CardTitle>
+        <CardTitle>Your {formatDate(startMonthDate, "MMMM")} Purchases</CardTitle>
         <CardDescription>Categories</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
