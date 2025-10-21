@@ -55,7 +55,7 @@ const formatFileSize = (bytes: number): string => {
 }
 
 
-const listUserCardsOptions = queryOptions({
+export const listUserCardsOptions = queryOptions({
   queryKey: ['cards'],
   queryFn: async () => {
     return listUserCardsFn()

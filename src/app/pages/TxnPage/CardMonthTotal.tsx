@@ -111,7 +111,11 @@ export function CardMonthTotal(props: CardMonthTotalProps) {
           </p>
         </div>
         <p className='text-xs uppercase text-muted-foreground font-semibold tracking-tight'>{title}</p>
-        <p className='text-2xl font-bold mb-5'>{formatAmount(daily_spent.reduce((amt: number, acc: number) => acc + amt))}</p>
+        <div className="flex items-baseline gap-1">
+          <span className="text-sm text-muted-foreground">PHP</span>
+          <p className='text-2xl font-bold mb-5'>{formatAmount(daily_spent.reduce((amt: number, acc: number) => acc + amt))}</p>
+        </div>
+
         <Sparklines data={daily_spent} limit={31} margin={0}>
           <SparklinesLine color="#b8bb26" />
         </Sparklines>

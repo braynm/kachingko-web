@@ -11,6 +11,13 @@ export const Route = createFileRoute('/_authenticated/spending-highlights/')({
   component: RouteComponent,
 })
 
+// current month
+export const fetchCategoryChartAndTxnsOpts = (startDate: string, endDate: string) => queryOptions({
+  queryKey: ['fetchCategoryChartAndTxns', startDate, endDate],
+  queryFn: () => fetchCategoryChartAndTxnsFn({ data: { startDate, endDate } }),
+})
+
+
 export const fetchUserChartsOpts = (startDate: string, endDate: string) => queryOptions({
   queryKey: ['fetchUserChartsOpts', startDate, endDate],
   queryFn: () => fetchUserChartsFn({ data: { startDate, endDate } }),
@@ -37,6 +44,28 @@ const chartsSchema = z.object({
   })
 })
 
+const categoryChartsSchema = z.object({
+  success: z.boolean(),
+  data: z.object({
+    categories: z.array(z.object({
+      value: z.number(),
+      category: z.string(),
+      label: z.string()
+    })),
+    prev_month_total_amount: z.string(),
+    cur_month_total_amount: z.string(),
+    cur_month_txns: z.array(z.object({
+      amount: z.number(),
+      category: z.string(),
+      details: z.string(),
+      sale_date: z.string(),
+      posted_date: z.string(),
+      id: z.string(),
+      card: z.string(),
+    })),
+  })
+})
+
 export const fetchUserChartsFn = createServerFn({
   method: 'GET'
 })
@@ -59,6 +88,30 @@ export const fetchUserChartsFn = createServerFn({
     const response = client.handleResponse(request)
     return response
   })
+
+export const fetchCategoryChartAndTxnsFn = createServerFn({
+  method: 'GET'
+})
+  .validator((data: { startDate: string, endDate: string }) => data)
+  .handler(async ({ data: { startDate, endDate } }: { data: { startDate: string, endDate: string } }) => { // Use data property
+    const session = await useAppSession()
+    const sessionData = session.data
+    const client = makeApiClient({
+      baseUrl: API_URL,
+      defaultHeaders: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionData.token}` // Token passed from loader
+      }
+    })
+
+    const url = `/api/charts/categories-and-txns?start_date=${startDate}&end_date=${endDate}`
+    const request = await client.request(url, categoryChartsSchema)()
+    console.log('API REQUEST LOGGING USER CATEGORY CHARTS REQUEST: ', url)
+
+    const response = client.handleResponse(request)
+    return response
+  })
+
 
 function RouteComponent() {
   return <SpendingHighlightPage />

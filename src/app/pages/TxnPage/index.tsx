@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2, TableProperties, Search, ArrowDownUp, CalendarDays, RotateCcw, Upload } from 'lucide-react'
 import {
   Table,
@@ -35,8 +35,10 @@ import { CardMonthTotal } from './CardMonthTotal'
 import { formatAmount } from '@/lib/utils/amount'
 
 import { endOfMonth, format, parseISO, startOfDay, startOfMonth, subMonths } from 'date-fns'
-import { Link } from '@tanstack/react-router'
 import { ISO8601_FORMAT } from '@/lib/utils/date'
+import { ImportTransactionButton } from './ImportTransactionButton'
+import { Badge } from '@/app/components/ui/badge'
+import { listUserCardsOptions } from '../TxnUploadPage'
 
 const formatDate = (date: string) => format(parseISO(date), "MM/dd/yy")
 
@@ -53,7 +55,28 @@ const monthRange = (now = new Date()) => {
 const curMonthRange = (now = new Date()) => monthRange(startOfDay(now))
 const prevMonthRange = (now = new Date()) => monthRange(subMonths(startOfDay(now), 1))
 
+type CardItem = { bank: string, name: string, id: string }
+type BankColors = { variant: string, text: string }
+
+export const bankCardColors: Array<{ variant: string, text: string }> = [
+  { variant: 'bg-accent', text: 'text-background ' },
+  { variant: 'bg-chart-1', text: 'text-green-900' },
+  { variant: 'bg-chart-5', text: 'text-accent-foreground dark:text-amber-100' },
+  { variant: 'bg-lime-700', text: 'text-lime-100' },
+  { variant: 'bg-emerald-400', text: 'text-emerald-900' },
+]
+
+export const mergeBankAndColors = (cards: CardItem[], bankCardColors: Array<BankColors>) => {
+  return cards.map((card, index) => ({
+    ...card,
+    ...bankCardColors[index]
+  }))
+}
+
 export function TxnPage({ queryClient }) {
+  const { data: cardsResponse } = useQuery(listUserCardsOptions)
+  const cards = cardsResponse?.success ? mergeBankAndColors(cardsResponse.data, bankCardColors) : []
+
   const {
     fetchNextPage,
     hasNextPage,
@@ -87,6 +110,7 @@ export function TxnPage({ queryClient }) {
   }, [maskAmt])
 
   const isLoading = mounted && isFetching
+
   return (
     <>
       <div className='container mx-auto w-full max-w-7xl w-7xl flex gap-5'>
@@ -95,10 +119,7 @@ export function TxnPage({ queryClient }) {
             <CardTitle>
               <div className='flex justify-between'>
                 <h1 className='text-2xl font-bold'>Transactions</h1>
-                <Link title='Upload' to='/txns/upload' className='p-3 bg-secondary rounded-md transition text-secondary-foreground'>
-                  <Upload className='h-4 w-4' />
-                </Link>
-
+                <ImportTransactionButton />
               </div>
               <div className='flex justify-between mt-5'>
                 <div className='flex items-center justify-center gap-2'>
@@ -149,7 +170,7 @@ export function TxnPage({ queryClient }) {
                       className="pl-8 border-transparent border"
                     />
                   </div>
-                  <Button variant='secondary' disabled={isLoading} className='cursor-pointer shadow-lg' onClick={() => resetQueries()}>
+                  <Button disabled={isLoading} className='cursor-pointer shadow-lg' onClick={() => resetQueries()}>
                     <RotateCcw />
                   </Button>
                 </div>
@@ -165,6 +186,7 @@ export function TxnPage({ queryClient }) {
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-left bold">Card</TableHead>
+                  <TableHead className="text-left bold">Category</TableHead>
                   <TableHead className="text-left bold">Sale Date</TableHead>
                   <TableHead className="text-left bold">Post Date</TableHead>
                   <TableHead className="text-left bold">Description</TableHead>
@@ -172,17 +194,29 @@ export function TxnPage({ queryClient }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {txns.map((transaction) => (
-                  <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
-                    <TableCell className="text-left text-xs">{transaction.card}</TableCell>
-                    <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
-                    <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
-                    <TableCell className="text-left text-xs">{transaction.details}</TableCell>
-                    <TableCell className="text-right font-medium ">{
-                      maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
-                    }</TableCell>
-                  </TableRow>
-                ))}
+                {txns.map((transaction) => {
+                  const card = cards.find(card => `${card.bank} ${card.name}` === transaction.card)
+                  return (
+                    <TableRow key={`${transaction.id} ${transaction.amount}`} className="p-5 odd:bg-muted/50">
+                      <TableCell className="text-left text-xs">
+                        <Badge className={`${card?.variant} ${card?.text}`}>
+                          {transaction.card}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-left text-xs">
+                        <Badge variant='outline'>
+                          {transaction.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
+                      <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
+                      <TableCell className="text-left text-xs">{transaction.details}</TableCell>
+                      <TableCell className="text-right font-medium ">{
+                        maskAmt ? formatAmount(transaction.amount).replace(/\d/g, 'X') : formatAmount(transaction.amount)
+                      }</TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>}
 
@@ -204,10 +238,10 @@ export function TxnPage({ queryClient }) {
 
           <CardFooter className='m-auto'>
             {hasNextPage && <Button
-              variant='secondary'
+              variant='outline'
               onClick={() => fetchNextPage()}
               disabled={!hasNextPage || isFetchingNextPage}
-              className='tex-sm transition transition-all shadow shadow-lg uppercase cursor-pointer bg-secondary text-secondary-foreground'
+              className='tex-sm transition transition-all shadow shadow-lg uppercase cursor-pointer'
             >
 
               {isFetching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

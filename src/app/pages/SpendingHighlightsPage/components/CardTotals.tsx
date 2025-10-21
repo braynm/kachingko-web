@@ -65,28 +65,41 @@ export function CardTotals(props: { data: CardTotalsProps, isLoading: boolean })
             <div className="flex items-between">
               <p className="flex gap-1 text-xs font-medium items-center text-muted-foreground">Year to Date</p>
             </div>
-            <h2 className="text-2xl text-left font-bold">PHP {formatToHumanReadableAmount(parseInt(data.ytdAmount))}</h2>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm text-muted-foreground">PHP</span>
+              <h2 className="text-2xl text-left font-bold">{formatToHumanReadableAmount(parseInt(data.ytdAmount))}</h2>
+            </div>
           </div>
 
           <div className="flex-0 min-w-0 basis-[calc(25%-0.75rem)]">
             <div className="flex items-between">
               <p className="flex gap-1 text-xs font-medium items-center text-muted-foreground">Monthly Average</p>
             </div>
-            <h2 className="text-2xl text-left font-bold">PHP {formatToHumanReadableAmount(parseInt(data.monthlyAvg))}</h2>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm text-muted-foreground">PHP</span>
+              <h2 className="text-2xl text-left font-bold">{formatToHumanReadableAmount(parseInt(data.monthlyAvg))}</h2>
+            </div>
           </div>
 
           <div className="flex-0 min-w-0 basis-[calc(25%-0.75rem)]">
             <div className="flex items-between">
               <p className="flex gap-1 text-xs font-medium ml-auto items-end text-muted-foreground">Highest Purchase</p>
             </div>
-            <h2 className="text-2xl text-right font-bold">PHP {formatToHumanReadableAmount(parseInt(data.highestPurchase))}</h2>
+            <div className="flex items-baseline gap-1 justify-end">
+              <span className="text-sm text-muted-foreground">PHP</span>
+              <h2 className="text-2xl text-left font-bold">{formatToHumanReadableAmount(parseInt(data.highestPurchase))}</h2>
+            </div>
           </div>
 
           <div className="flex-0 min-w-0 basis-[calc(25%-0.75rem)]">
             <div className="flex items-end">
               <p className=" text-xs font-medium  ml-auto  text-muted-foreground">Overall Spending</p>
             </div>
-            <h2 className="text-2xl text-right font-bold">PHP {formatToHumanReadableAmount(parseInt(data.overallAmount))}</h2>
+            {/* <h2 className="text-2xl text-right font-bold">PHP {formatToHumanReadableAmount(parseInt(data.overallAmount))}</h2> */}
+            <div className="flex items-baseline gap-1 justify-end">
+              <span className="text-sm text-muted-foreground">PHP</span>
+              <h2 className="text-2xl text-left font-bold">{formatToHumanReadableAmount(parseInt(data.overallAmount))}</h2>
+            </div>
           </div>
         </div>
       </CardContent>

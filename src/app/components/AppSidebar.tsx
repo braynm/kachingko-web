@@ -17,7 +17,8 @@ import {
   User2,
   ChartSpline,
   CreditCard,
-  Settings2
+  Settings2,
+  BanknoteArrowUp
 } from 'lucide-react'
 
 import {
@@ -31,7 +32,7 @@ import { Link, useMatchRoute } from "@tanstack/react-router"
 
 const menuItems = [
   { path: '/spending-highlights', label: 'Spending Highlights', icon: ChartSpline, },
-  { path: '/txns', label: 'Transactions', icon: CreditCard, },
+  { path: '/txns', label: 'Transactions', icon: BanknoteArrowUp, },
   { path: '/', label: 'Settings', icon: Settings2 },
 ]
 
