@@ -50,7 +50,18 @@ export function CategoriesTxnList({
     <>
       <div className="flex justify-between">
         <div className="mb-2">
-          <h2 className="text-sm text-muted-foreground">Transactions</h2>
+          <div className="flex items-center">
+            <h2 className="text-sm text-muted-foreground">Transactions</h2>
+            <div className="flex gap-2 items-center">
+              {txns && txns.length > 0 && <Button
+                onClick={() => setMaskAmt(!maskAmt)}
+                className="cursor-pointer"
+                variant="ghost"
+                size='icon'>
+                {maskAmt ? <Eye className='cursor-pointer w-6 h-6' /> : <EyeOff className='cursor-pointerw-6 h-6' />}
+              </Button>}
+            </div>
+          </div>
           <div className="flex items-center gap-3 mb-2">
             <div className="flex items-baseline gap-1">
               <span className="text-sm text-muted-foreground">PHP</span>
@@ -62,23 +73,6 @@ export function CategoriesTxnList({
               {Math.round(pct)}%
             </span>}
           </div>
-        </div>
-        <div className="flex gap-2 items-center">
-          {txns && txns.length > 0 && <Button
-            onClick={() => setMaskAmt(!maskAmt)}
-            className="cursor-pointer"
-            variant="ghost"
-            size='icon'>
-            {maskAmt ? <Eye className='cursor-pointer w-6 h-6' /> : <EyeOff className='cursor-pointerw-6 h-6' />}
-          </Button>}
-          {/* <div className="flex items-center justify-center flex-row cursor-pointer"> */}
-          {/*   <X className="h-4 w-4" /> */}
-          {/*   <span className="cursor-pointer underline text-sm mr-2">Clear All</span> */}
-          {/* </div> */}
-          {/* <div> */}
-          {/*   <Badge className="bg-chart-3 text-green-900">EastWest Plat Cashback</Badge> */}
-          {/* </div> */}
-          {/* <div><Badge variant='outline'>Health & Pharmacy</Badge></div> */}
         </div>
       </div >
       {isFetching && <TableSkeleton length={10} />
