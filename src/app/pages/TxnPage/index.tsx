@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { Eye, EyeOff, Loader2, TableProperties, Search, ArrowDownUp, CalendarDays, RotateCcw, Upload } from 'lucide-react'
+import { Eye, EyeOff, Loader2, TableProperties, Search, ArrowDownUp, CalendarDays, RotateCcw, Upload, ShoppingBag } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -39,6 +39,7 @@ import { ISO8601_FORMAT } from '@/lib/utils/date'
 import { ImportTransactionButton } from './ImportTransactionButton'
 import { Badge } from '@/app/components/ui/badge'
 import { listUserCardsOptions } from '../TxnUploadPage'
+import { CategoryBadge } from '@/app/components/CategoryBadge'
 
 const formatDate = (date: string) => format(parseISO(date), "MM/dd/yy")
 
@@ -204,9 +205,7 @@ export function TxnPage({ queryClient }) {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-left text-xs">
-                        <Badge variant='outline'>
-                          {transaction.category}
-                        </Badge>
+                        <CategoryBadge text={transaction.category} />
                       </TableCell>
                       <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
                       <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>

@@ -19,6 +19,7 @@ import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { TableSkeleton } from "@/app/routes/_authenticated/txns";
 import { listUserCardsOptions } from "../../TxnUploadPage";
+import { CategoryBadge } from "@/app/components/CategoryBadge";
 
 type TxnItem = {
   category: string,
@@ -100,9 +101,7 @@ export function CategoriesTxnList({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-left text-xs">
-                    <Badge variant='outline'>
-                      {transaction.category}
-                    </Badge>
+                    <CategoryBadge text={transaction.category} />
                   </TableCell>
                   <TableCell className="text-left text-xs">{formatDate(transaction.sale_date)}</TableCell>
                   <TableCell className="text-left text-xs">{formatDate(transaction.posted_date)}</TableCell>
