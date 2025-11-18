@@ -12,13 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnathenticatedRouteImport } from './routes/_unathenticated'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UnathenticatedTwoFactorLoginRouteImport } from './routes/_unathenticated/two-factor-login'
 import { Route as UnathenticatedSignupRouteImport } from './routes/_unathenticated/signup'
-import { Route as UnathenticatedLoginRouteImport } from './routes/_unathenticated/login'
 import { Route as AuthenticatedLogoutRouteImport } from './routes/_authenticated/logout'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as UnathenticatedLoginIndexRouteImport } from './routes/_unathenticated/login/index'
 import { Route as AuthenticatedTxnsIndexRouteImport } from './routes/_authenticated/txns/index'
 import { Route as AuthenticatedSpendingHighlightsIndexRouteImport } from './routes/_authenticated/spending-highlights/index'
+import { Route as UnathenticatedLoginTwoFactorRouteImport } from './routes/_unathenticated/login/two-factor'
 import { Route as AuthenticatedTxnsUploadRouteImport } from './routes/_authenticated/txns/upload'
+import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings/profile'
 
 const UnathenticatedRoute = UnathenticatedRouteImport.update({
   id: '/_unathenticated',
@@ -33,14 +36,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnathenticatedTwoFactorLoginRoute =
+  UnathenticatedTwoFactorLoginRouteImport.update({
+    id: '/two-factor-login',
+    path: '/two-factor-login',
+    getParentRoute: () => UnathenticatedRoute,
+  } as any)
 const UnathenticatedSignupRoute = UnathenticatedSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => UnathenticatedRoute,
-} as any)
-const UnathenticatedLoginRoute = UnathenticatedLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => UnathenticatedRoute,
 } as any)
 const AuthenticatedLogoutRoute = AuthenticatedLogoutRouteImport.update({
@@ -53,6 +57,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const UnathenticatedLoginIndexRoute =
+  UnathenticatedLoginIndexRouteImport.update({
+    id: '/login/',
+    path: '/login/',
+    getParentRoute: () => UnathenticatedRoute,
+  } as any)
 const AuthenticatedTxnsIndexRoute = AuthenticatedTxnsIndexRouteImport.update({
   id: '/txns/',
   path: '/txns/',
@@ -64,31 +74,49 @@ const AuthenticatedSpendingHighlightsIndexRoute =
     path: '/spending-highlights/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const UnathenticatedLoginTwoFactorRoute =
+  UnathenticatedLoginTwoFactorRouteImport.update({
+    id: '/login/two-factor',
+    path: '/login/two-factor',
+    getParentRoute: () => UnathenticatedRoute,
+  } as any)
 const AuthenticatedTxnsUploadRoute = AuthenticatedTxnsUploadRouteImport.update({
   id: '/txns/upload',
   path: '/txns/upload',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSettingsProfileRoute =
+  AuthenticatedSettingsProfileRouteImport.update({
+    id: '/settings/profile',
+    path: '/settings/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/logout': typeof AuthenticatedLogoutRoute
-  '/login': typeof UnathenticatedLoginRoute
   '/signup': typeof UnathenticatedSignupRoute
+  '/two-factor-login': typeof UnathenticatedTwoFactorLoginRoute
+  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/txns/upload': typeof AuthenticatedTxnsUploadRoute
+  '/login/two-factor': typeof UnathenticatedLoginTwoFactorRoute
   '/spending-highlights': typeof AuthenticatedSpendingHighlightsIndexRoute
   '/txns': typeof AuthenticatedTxnsIndexRoute
+  '/login': typeof UnathenticatedLoginIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/logout': typeof AuthenticatedLogoutRoute
-  '/login': typeof UnathenticatedLoginRoute
   '/signup': typeof UnathenticatedSignupRoute
+  '/two-factor-login': typeof UnathenticatedTwoFactorLoginRoute
+  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/txns/upload': typeof AuthenticatedTxnsUploadRoute
+  '/login/two-factor': typeof UnathenticatedLoginTwoFactorRoute
   '/spending-highlights': typeof AuthenticatedSpendingHighlightsIndexRoute
   '/txns': typeof AuthenticatedTxnsIndexRoute
+  '/login': typeof UnathenticatedLoginIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,11 +125,14 @@ export interface FileRoutesById {
   '/_unathenticated': typeof UnathenticatedRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/logout': typeof AuthenticatedLogoutRoute
-  '/_unathenticated/login': typeof UnathenticatedLoginRoute
   '/_unathenticated/signup': typeof UnathenticatedSignupRoute
+  '/_unathenticated/two-factor-login': typeof UnathenticatedTwoFactorLoginRoute
+  '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/txns/upload': typeof AuthenticatedTxnsUploadRoute
+  '/_unathenticated/login/two-factor': typeof UnathenticatedLoginTwoFactorRoute
   '/_authenticated/spending-highlights/': typeof AuthenticatedSpendingHighlightsIndexRoute
   '/_authenticated/txns/': typeof AuthenticatedTxnsIndexRoute
+  '/_unathenticated/login/': typeof UnathenticatedLoginIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,21 +140,27 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/logout'
-    | '/login'
     | '/signup'
+    | '/two-factor-login'
+    | '/settings/profile'
     | '/txns/upload'
+    | '/login/two-factor'
     | '/spending-highlights'
     | '/txns'
+    | '/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
     | '/logout'
-    | '/login'
     | '/signup'
+    | '/two-factor-login'
+    | '/settings/profile'
     | '/txns/upload'
+    | '/login/two-factor'
     | '/spending-highlights'
     | '/txns'
+    | '/login'
   id:
     | '__root__'
     | '/'
@@ -131,11 +168,14 @@ export interface FileRouteTypes {
     | '/_unathenticated'
     | '/_authenticated/dashboard'
     | '/_authenticated/logout'
-    | '/_unathenticated/login'
     | '/_unathenticated/signup'
+    | '/_unathenticated/two-factor-login'
+    | '/_authenticated/settings/profile'
     | '/_authenticated/txns/upload'
+    | '/_unathenticated/login/two-factor'
     | '/_authenticated/spending-highlights/'
     | '/_authenticated/txns/'
+    | '/_unathenticated/login/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,18 +207,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_unathenticated/two-factor-login': {
+      id: '/_unathenticated/two-factor-login'
+      path: '/two-factor-login'
+      fullPath: '/two-factor-login'
+      preLoaderRoute: typeof UnathenticatedTwoFactorLoginRouteImport
+      parentRoute: typeof UnathenticatedRoute
+    }
     '/_unathenticated/signup': {
       id: '/_unathenticated/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof UnathenticatedSignupRouteImport
-      parentRoute: typeof UnathenticatedRoute
-    }
-    '/_unathenticated/login': {
-      id: '/_unathenticated/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof UnathenticatedLoginRouteImport
       parentRoute: typeof UnathenticatedRoute
     }
     '/_authenticated/logout': {
@@ -195,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_unathenticated/login/': {
+      id: '/_unathenticated/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof UnathenticatedLoginIndexRouteImport
+      parentRoute: typeof UnathenticatedRoute
+    }
     '/_authenticated/txns/': {
       id: '/_authenticated/txns/'
       path: '/txns'
@@ -209,11 +256,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSpendingHighlightsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_unathenticated/login/two-factor': {
+      id: '/_unathenticated/login/two-factor'
+      path: '/login/two-factor'
+      fullPath: '/login/two-factor'
+      preLoaderRoute: typeof UnathenticatedLoginTwoFactorRouteImport
+      parentRoute: typeof UnathenticatedRoute
+    }
     '/_authenticated/txns/upload': {
       id: '/_authenticated/txns/upload'
       path: '/txns/upload'
       fullPath: '/txns/upload'
       preLoaderRoute: typeof AuthenticatedTxnsUploadRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/profile': {
+      id: '/_authenticated/settings/profile'
+      path: '/settings/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof AuthenticatedSettingsProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -222,6 +283,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLogoutRoute: typeof AuthenticatedLogoutRoute
+  AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
   AuthenticatedTxnsUploadRoute: typeof AuthenticatedTxnsUploadRoute
   AuthenticatedSpendingHighlightsIndexRoute: typeof AuthenticatedSpendingHighlightsIndexRoute
   AuthenticatedTxnsIndexRoute: typeof AuthenticatedTxnsIndexRoute
@@ -230,6 +292,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLogoutRoute: AuthenticatedLogoutRoute,
+  AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
   AuthenticatedTxnsUploadRoute: AuthenticatedTxnsUploadRoute,
   AuthenticatedSpendingHighlightsIndexRoute:
     AuthenticatedSpendingHighlightsIndexRoute,
@@ -241,13 +304,17 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface UnathenticatedRouteChildren {
-  UnathenticatedLoginRoute: typeof UnathenticatedLoginRoute
   UnathenticatedSignupRoute: typeof UnathenticatedSignupRoute
+  UnathenticatedTwoFactorLoginRoute: typeof UnathenticatedTwoFactorLoginRoute
+  UnathenticatedLoginTwoFactorRoute: typeof UnathenticatedLoginTwoFactorRoute
+  UnathenticatedLoginIndexRoute: typeof UnathenticatedLoginIndexRoute
 }
 
 const UnathenticatedRouteChildren: UnathenticatedRouteChildren = {
-  UnathenticatedLoginRoute: UnathenticatedLoginRoute,
   UnathenticatedSignupRoute: UnathenticatedSignupRoute,
+  UnathenticatedTwoFactorLoginRoute: UnathenticatedTwoFactorLoginRoute,
+  UnathenticatedLoginTwoFactorRoute: UnathenticatedLoginTwoFactorRoute,
+  UnathenticatedLoginIndexRoute: UnathenticatedLoginIndexRoute,
 }
 
 const UnathenticatedRouteWithChildren = UnathenticatedRoute._addFileChildren(

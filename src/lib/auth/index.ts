@@ -10,12 +10,17 @@ export const authSchema = z.object({
   password: z.string().min(5, 'password minumum of 5 character(s)')
 })
 
+export const otpAuthSchema = z.object({
+  otp: z.string().length(6, 'otp length should be 6 character(s)')
+})
+
 type AuthSchema = z.infer<typeof authSchema>
 
 const userResponseSchema = z.object({
   success: z.boolean(),
   data: z.object({
     token: z.string(),
+    two_factor_required: z.boolean().optional(),
     user: z.object({
       id: z.number(),
       email: z.string().email(),

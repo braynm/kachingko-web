@@ -17,7 +17,7 @@ import { BanknoteArrowUpIcon, BookText, FileImage, NotebookPen, Upload } from "l
 export function ImportTransactionButton() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button className="cursor-pointer">
           <BanknoteArrowUpIcon />
           Import Transactions

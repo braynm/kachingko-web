@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { AlertCircleIcon, Loader2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -9,8 +10,8 @@ import { Card, CardContent } from "@/app/components/ui/card"
 import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { authenticateCredentialsFn, authSchema } from '@/lib/auth'
-import { useNavigate, useRouter } from '@tanstack/react-router'
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert'
+import { getDeviceFingerprint } from '@/lib/utils/fingerprint'
 
 export function LoginPage({
   className,
@@ -29,14 +30,27 @@ export function LoginPage({
     },
 
     onSubmit: async ({ value }) => {
+      const fingerprint = await getDeviceFingerprint();
+      console.log({ fingerprint })
+      // return
+
       const res = await authenticateCredentialsFn({ data: value })
       if (!res.success) {
         setErr(res.error.message)
       } else {
-        router.invalidate()
-        navigate({
-          to: '/txns'
-        })
+        if (res.data.two_factor_required) {
+          router.invalidate()
+          navigate({
+            to: '/login/two-factor'
+          })
+        } else {
+          console.log({ res })
+          router.invalidate()
+          navigate({
+            to: '/txns'
+          })
+        }
+
       }
     }
   })

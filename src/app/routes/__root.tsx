@@ -70,6 +70,8 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
             // TODO: make it more elegant and handle xhr api call level
             if (data?.status === 401) {
               window.location.href = '/logout'
+            } else if (data?.status === 403) {
+              window.location.href = '/login/two-factor'
             }
           }
         }),
